@@ -38,7 +38,6 @@ public class UDPClient : MonoBehaviour
     private bool modoEscolhido;
     private bool souServidor;
 
-    private string ipDigitado;
     private string status = "Escolha como deseja jogar";
     private string ipLocal = "";
 
@@ -60,8 +59,6 @@ public class UDPClient : MonoBehaviour
 
     private void Awake()
     {
-        ipDigitado = ipServidor;
-
         if (udpServer == null)
             udpServer = FindFirstObjectByType<UDPServer>();
 
@@ -124,87 +121,6 @@ public class UDPClient : MonoBehaviour
                 EnviarEstadoBola();
             }
         }
-    }
-
-    private void OnGUI()
-    {
-        if (partidaPronta && playerID != 0)
-            return;
-
-        float largura = 420f;
-        float altura = modoEscolhido ? 185f : 250f;
-        Rect area = new Rect(
-            (Screen.width - largura) * 0.5f,
-            (Screen.height - altura) * 0.5f,
-            largura,
-            altura
-        );
-
-        GUILayout.BeginArea(area, GUI.skin.box);
-        GUILayout.Space(8f);
-        GUILayout.Label("PONG EM REDE LOCAL", EstiloTitulo());
-        GUILayout.Space(10f);
-
-        if (!modoEscolhido)
-        {
-            GUILayout.Label("Servidor: joga com W / S");
-            GUILayout.Label("Cliente: joga com as setas ↑ / ↓");
-            if (status != "Escolha como deseja jogar")
-                GUILayout.Label(status, EstiloCentralizado());
-            GUILayout.Space(8f);
-
-            if (GUILayout.Button("CRIAR SERVIDOR", GUILayout.Height(38f)))
-                IniciarComoServidor();
-
-            GUILayout.Space(8f);
-            GUILayout.Label("IP do computador servidor:");
-            ipDigitado = GUILayout.TextField(ipDigitado, 45);
-
-            if (GUILayout.Button("ENTRAR COMO CLIENTE", GUILayout.Height(38f)))
-                IniciarComoCliente(ipDigitado);
-        }
-        else
-        {
-            GUILayout.Label(status, EstiloCentralizado());
-
-            if (souServidor)
-            {
-                GUILayout.Space(8f);
-                GUILayout.Label("Informe este IP ao cliente:", EstiloCentralizado());
-                GUILayout.Label(ipLocal, EstiloIP());
-            }
-
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("CANCELAR", GUILayout.Height(32f)))
-                CancelarConexao();
-        }
-
-        GUILayout.EndArea();
-    }
-
-    private GUIStyle EstiloTitulo()
-    {
-        GUIStyle estilo = new GUIStyle(GUI.skin.label);
-        estilo.alignment = TextAnchor.MiddleCenter;
-        estilo.fontStyle = FontStyle.Bold;
-        estilo.fontSize = 20;
-        return estilo;
-    }
-
-    private GUIStyle EstiloCentralizado()
-    {
-        GUIStyle estilo = new GUIStyle(GUI.skin.label);
-        estilo.alignment = TextAnchor.MiddleCenter;
-        estilo.wordWrap = true;
-        return estilo;
-    }
-
-    private GUIStyle EstiloIP()
-    {
-        GUIStyle estilo = EstiloCentralizado();
-        estilo.fontStyle = FontStyle.Bold;
-        estilo.fontSize = 22;
-        return estilo;
     }
 
     public void IniciarComoServidor()
@@ -608,7 +524,7 @@ public class UDPClient : MonoBehaviour
         return "Verifique com ipconfig";
     }
 
-    private void CancelarConexao()
+    public void CancelarConexao()
     {
         FecharSocket(true);
 
@@ -633,6 +549,26 @@ public class UDPClient : MonoBehaviour
     public bool PartidaPronta()
     {
         return partidaPronta;
+    }
+
+    public bool ModoEscolhido()
+    {
+        return modoEscolhido;
+    }
+
+    public bool SouServidor()
+    {
+        return souServidor;
+    }
+
+    public string StatusConexao()
+    {
+        return status;
+    }
+
+    public string GetIPLocal()
+    {
+        return ipLocal;
     }
 
     private void OnDestroy()
